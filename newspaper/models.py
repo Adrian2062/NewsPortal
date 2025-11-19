@@ -41,7 +41,7 @@ class Post(TimeStampedModel):
     is_breaking_news = models.BooleanField(default=False)
     published_at = models.DateTimeField(null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    tags = models.ManyToManyField(Tag)
+    tag = models.ManyToManyField(Tag)
 
     def __str__(self):
         return self.title
