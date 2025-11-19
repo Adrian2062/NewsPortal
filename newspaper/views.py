@@ -1,14 +1,13 @@
 from django.shortcuts import render
-
+from django.views.generic import TemplateView
+from django.utils import timezone
+from datetime import timedelta
+from .models import Post
 # Create your views here.
 class HomeView(TemplateView):
-    model = "Post"
     template_name = "newsportal/home.html"
-    context_object_name = "posts"
-    queryset = Post.objects.filter(
-        published_at__isnull=False, status = "active"
-    ).order_by("-published_at")[:4]
-
+    
+    # If we want to add extra context data to our template we use get_context_data
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breaking_news"] = Post.objects.filter(
@@ -16,6 +15,7 @@ class HomeView(TemplateView):
             published_at__isnull=False,
             status="active"
         ).order_by("-published_at")[:3]
+
         context["featured_post"] = (
             Post.objects.filter(published_at__isnull=False, status="active")
             .order_by("-published_at", "views_count")
@@ -30,4 +30,8 @@ class HomeView(TemplateView):
         context["weekly_top_posts"] = Post.objects.filter(
             published_at__isnull=False, status="active", published_at__gte=one_week_ago
         ).order_by("-published_at", "-views_count")[:5]
+        context["popular_posts"] = Post.objects.filter(
+            published_at__isnull=False,
+            status="active"
+        ).order_by("-published_at")[:5]
         return context
