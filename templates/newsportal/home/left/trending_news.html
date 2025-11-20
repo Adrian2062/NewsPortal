@@ -7,9 +7,11 @@
             {% for post in trending_news %}
                 <div class="col">
               <div class="card h-100 shadow-sm news-card">
-                <img src="{{ featured_post.featured_image.url }}"
+                <img src="{{ post.featured_image.url }}"
                      class="card-img-top"
-                     alt="{{ post.title }}" />
+                     alt="{{ post.title }}"
+                     width="400"
+                     height="250" />
                 <div class="card-body">
                   <h5 class="card-title">{{ post.title}}</h5>
                   <p class="card-text">{{ post.content|truncatechars:60 }}</p>
