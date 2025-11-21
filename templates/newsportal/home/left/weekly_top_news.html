@@ -8,7 +8,7 @@
                     <h6 class="mb-0">{{ post.title|truncatechars:30 }}</h6>
                     <p class="mb-0 opacity-75">{{ post.content|truncatechars:60 }}</p>
                   </div>
-                  <small class="opacity-50 text-nowrap">3d ago</small>
+                  <small class="opacity-50 text-nowrap">{{post.published_at|timesince}}</small>
                 </div>
               </a>
             </div>
