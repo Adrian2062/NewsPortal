@@ -3,9 +3,23 @@ from django.views.generic import TemplateView, ListView, DetailView
 from django.utils import timezone
 from datetime import timedelta
 from .models import Post
+from newspaper.models import Advertisement
 
+class SidebarMixin:
+     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["popular_posts"] = Post.objects.filter(
+            published_at__isnull=False,
+            status="active"
+        ).order_by("-published_at")[:5]
+
+        context["advertisements"] = (
+            Advertisement.objects.all().order_by("-created_at").first()
+        )
+
+        return context
 # Create your views here.
-class HomeView(TemplateView):
+class HomeView(SidebarMixin,TemplateView):
     template_name = "newsportal/home.html"
     
     # If we want to add extra context data to our template we use get_context_data
@@ -36,7 +50,7 @@ class HomeView(TemplateView):
             status="active"
         ).order_by("-published_at")[:5]
         return context
-class PostListView(ListView):
+class PostListView(SidebarMixin,ListView):
     model = Post
     template_name = "newsportal/list/list.html"
     context_object_name = "posts"
@@ -47,14 +61,8 @@ class PostListView(ListView):
             published_at__isnull=False,
             status="active"
         ).order_by("-published_at")
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["popular_posts"] = Post.objects.filter(
-            published_at__isnull=False,
-            status="active"
-        ).order_by("-published_at")[:5]
-        return context
-class PostDetailView(DetailView):
+    
+class PostDetailView(SidebarMixin,DetailView):
     model = Post
     template_name = "newsportal/detail/detail.html"
     context_object_name = "post"
@@ -63,3 +71,17 @@ class PostDetailView(DetailView):
         query = super().get_queryset()
         query = query.filter(published_at__isnull=False, status="active")
         return query
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["related_articles"] = (
+            Post.objects.filter(
+                published_at__isnull=False,
+                status="active",
+                category=self.object.category
+            )
+            .exclude(id=self.object.id)
+            .order_by("-published_at", "-views_count")[:2]
+        )
+        return context
