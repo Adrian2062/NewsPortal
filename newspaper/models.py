@@ -51,3 +51,15 @@ class Advertisement(TimeStampedModel):
     image = models.ImageField(upload_to="advertisements/%Y/%m/%d/", blank=False)
     def __str__(self):
         return self.title
+
+class Contact(TimeStampedModel):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["-created_at"]

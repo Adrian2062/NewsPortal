@@ -1,9 +1,13 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView, ListView, DetailView
+from django.views.generic import TemplateView, ListView, DetailView, CreateView
 from django.utils import timezone
 from datetime import timedelta
 from .models import Post
-from newspaper.models import Advertisement
+from newspaper.models import Advertisement, Contact, Tag
+from django.urls import reverse_lazy
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+from newspaper.forms import ContactForm
 
 class SidebarMixin:
      def get_context_data(self, **kwargs):
@@ -85,3 +89,18 @@ class PostDetailView(SidebarMixin,DetailView):
             .order_by("-published_at", "-views_count")[:2]
         )
         return context
+    
+class ContactCreateView(SuccessMessageMixin, CreateView):
+    model = Contact
+    form_class = ContactForm
+    template_name = "newsportal/contact.html"
+    success_url = reverse_lazy("contact")
+    success_message = "Your message has been sent successfully!"
+
+    def form_invalid(self, form):
+        messages.error(
+            self.request,
+            "There was an error sending your message. Please check the form.",
+        )
+        return super().form_invalid(form)
+
