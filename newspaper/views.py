@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, DetailView, CreateView
 from django.utils import timezone
 from datetime import timedelta
-from .models import Post
-from newspaper.models import Advertisement, Contact, Tag
+from .models import Post, OurTeam
+from newspaper.models import Advertisement, Contact, Tag 
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
@@ -111,8 +111,6 @@ class ContactCreateView(SuccessMessageMixin, CreateView):
     
 from django.views.generic import TemplateView
 
-class AboutView(TemplateView):
-    template_name = "about.html"
 
 from django.views.generic import ListView
 from .models import Tag, Category   # adjust if your model is named differently
@@ -121,9 +119,18 @@ class AllTagsView(ListView):
     model = Tag
     template_name = "all_tags.html"
     context_object_name = "tags"
-    success_url = reverse_lazy('all-tags')
 
 class AllCategoriesView(ListView):
     model = Category
     template_name = "all_categories.html"  # create this template
     context_object_name = "categories"
+
+class AboutView(TemplateView):
+    template_name = "about.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["our_teams"] = OurTeam.objects.all()
+        return context
+
+
+

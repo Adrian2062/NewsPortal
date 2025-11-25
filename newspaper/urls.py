@@ -9,9 +9,8 @@ urlpatterns = [
     path("post-detail/<int:pk>/", views.PostDetailView.as_view(), name="post-detail"),
     path("contact/", views.ContactCreateView.as_view(), name="contact"),
     path("about/", views.AboutView.as_view(), name="about"),
-    # urls.py
     path("tags/", AllTagsView.as_view(), name="all-tags"),
-     path("categories/", AllCategoriesView.as_view(), name="all-categories"),
+    path("categories/", AllCategoriesView.as_view(), name="all-categories"),
 
 
 ]
