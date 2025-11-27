@@ -4,10 +4,18 @@
 </h3>
 <div class="card p-4 shadow-sm mb-4">
   <!-- Comment Form -->
-  <form>
+  <form method="post">
+    {% csrf_token %}
     <div class="mb-3">
+      <input type="hidden" 
+             name="post" 
+             value="{{ post.pk }}" />
       <label for="commentText" class="form-label">Leave a Comment</label>
-      <textarea class="form-control" id="commentText" rows="4" placeholder="Write your comment here..."></textarea>
+      <textarea class="form-control" 
+              id="commentText"
+              name="content"
+              rows="4" 
+              placeholder="Write your comment here..."></textarea>
     </div>
     <button type="submit" class="btn btn-success">Post Comment</button>
   </form>

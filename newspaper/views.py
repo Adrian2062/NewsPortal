@@ -1,13 +1,15 @@
+from email import message
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, DetailView, CreateView
 from django.utils import timezone
 from datetime import timedelta
 from .models import Post, OurTeam
 from newspaper.models import Advertisement, Contact, Tag 
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from newspaper.forms import ContactForm
+from newspaper.forms import CommentForm, ContactForm
+from django.views.generic.edit import FormMixin
 
 class SidebarMixin:
      def get_context_data(self, **kwargs):
@@ -66,16 +68,38 @@ class PostListView(SidebarMixin,ListView):
             status="active"
         ).order_by("-published_at")
     
-class PostDetailView(SidebarMixin,DetailView):
+
+
+class PostDetailView(SidebarMixin, FormMixin, DetailView):
     model = Post
     template_name = "newsportal/detail/detail.html"
     context_object_name = "post"
+    form_class = CommentForm
 
-    def get_queryset(self):
-        query = super().get_queryset()
-        query = query.filter(published_at__isnull=False, status="active")
-        return query
-    
+    def get_success_url(self):
+        return reverse("post-detail", kwargs={"pk": self.object.pk}) # stay on the same post
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        comment = form.save(commit=False)
+        comment.user = self.request.user
+        comment.post = self.object
+        comment.save()
+        messages.success(self.request, "Your comment has been added successfully!")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "There was an error submitting your comment.")
+        return super().form_invalid(form)
+
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
