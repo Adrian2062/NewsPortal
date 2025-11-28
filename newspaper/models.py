@@ -80,3 +80,13 @@ class Comment(TimeStampedModel):
 
     def __str__(self):
         return f"{self.user} - {self.post}"
+    
+
+class UserProfile(TimeStampedModel):
+    user = models.OneToOneField("auth.User", on_delete=models.CASCADE)
+    biography = models.TextField()
+    image = models.ImageField(upload_to="user_images/%Y/%m/%d/", blank=False)
+    address = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.user.username

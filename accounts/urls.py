@@ -13,4 +13,6 @@ urlpatterns = [
     ),
     path("logout/", auth_views.LogoutView.as_view(), name="logout"),
     path("register/", views.RegistrationView.as_view(), name="register"),
+    # dashboard
+    
 ]

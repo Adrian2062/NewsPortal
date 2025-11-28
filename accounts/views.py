@@ -15,3 +15,5 @@ class RegistrationView(View):
             # login(request, user) optional
             return redirect("accounts:login")
         return render(request, "registration/register.html", {"form": form})
+    
+# for dashboard

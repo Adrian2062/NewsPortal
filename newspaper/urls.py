@@ -11,6 +11,6 @@ urlpatterns = [
     path("about/", views.AboutView.as_view(), name="about"),
     path("tags/", AllTagsView.as_view(), name="all-tags"),
     path("categories/", AllCategoriesView.as_view(), name="all-categories"),
-
+    path("post-by-category/<int:category_id>/", views.PostByCategoryView.as_view(), name="post-by-category"),
 
 ]
