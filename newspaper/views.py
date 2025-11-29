@@ -1,5 +1,6 @@
 from email import message
 from django.shortcuts import render
+from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView
 from django.utils import timezone
 from datetime import timedelta
@@ -8,7 +9,7 @@ from newspaper.models import Advertisement, Contact, Tag
 from django.urls import reverse, reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from newspaper.forms import CommentForm, ContactForm
+from newspaper.forms import CommentForm, ContactForm, NewsletterForm
 from django.views.generic.edit import FormMixin
 
 class SidebarMixin:
@@ -171,5 +172,41 @@ class PostByCategoryView(SidebarMixin,ListView):
         ).order_by("-published_at")
         return query
 
+
+from django.http import JsonResponse
+
+class NewsletterView(View):
+    def post(self, request):
+        is_ajax = request.headers.get("x-requested-with")
+        if is_ajax == "XMLHttpRequest":
+            form = NewsletterForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return JsonResponse(
+                    {
+                        "success": True,
+                        "message": "Successfully subscribed to newsletter!", 
+                    },
+                    status=201,
+                
+                )
+            else:
+                return JsonResponse(
+                    {
+                    "success": False,
+                    "message": "Cannot subscribe the newsletter.",
+                    },
+                    status=400,
+                )
+        else:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "Cannot process. Must be an AJAX XMLHttpRequest.",
+                },
+                status=400,
+            )
+           
+    
 
 

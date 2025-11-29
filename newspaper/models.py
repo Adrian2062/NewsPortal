@@ -90,3 +90,9 @@ class UserProfile(TimeStampedModel):
 
     def __str__(self):
         return self.user.username
+    
+class Newsletter(TimeStampedModel):
+    email = models.EmailField(unique=True)
+
+    def __str__(self):
+        return self.email
