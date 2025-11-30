@@ -13,5 +13,6 @@ urlpatterns = [
     path("categories/", AllCategoriesView.as_view(), name="all-categories"),
     path("post-by-category/<int:category_id>/", views.PostByCategoryView.as_view(), name="post-by-category"),
     path("newsletter/", views.NewsletterView.as_view(), name="newsletter"),
+    path("search/", views.PostSearchView.as_view(), name="search"),
 
 ]
