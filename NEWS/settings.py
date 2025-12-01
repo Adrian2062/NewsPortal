@@ -37,9 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # third party apps
+    'tinymce',
+    # custom apps
     'newspaper',
     'accounts',
     'dashboard',
+    'reports',
+    
 ]
 
 MIDDLEWARE = [
