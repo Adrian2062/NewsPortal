@@ -13,6 +13,7 @@ admin.site.register(Newsletter)
 
 from django import forms
 from tinymce.widgets import TinyMCE
+from unfold.admin import ModelAdmin
 
 
 class PostAdminForm(forms.ModelForm):
