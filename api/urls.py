@@ -12,7 +12,7 @@ router.register(r"groups", views.GroupViewSet)
 urlpatterns = [
     path("", include(router.urls)),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
-]
+
 
 
 
@@ -22,3 +22,17 @@ path(
     views.CommentListcreateAPIView.as_view(),
     name="comment-list-create-api",
 ),
+
+path(
+    "posts/<int:post_id>/comments/<int:pk>/",
+    views.CommentDetailAPIView.as_view(),
+    name="comment-detail-api",
+),
+
+path(
+    "register/",
+    views.UserRegistrationView.as_view(),
+    name="register",
+),
+
+]

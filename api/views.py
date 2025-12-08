@@ -2,7 +2,7 @@ from django.contrib.auth.models import Group, User
 from rest_framework import permissions, viewsets, status
 from rest_framework.views import APIView
 
-from api.serializers import CommentSerializer, GroupSerializer, UserSerializer
+from api.serializers import CommentSerializer, GroupSerializer, UserRegistrationSerializer, UserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -43,4 +43,46 @@ class CommentListcreateAPIView(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user, post_id=post_id)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-            
+
+
+class CommentDetailAPIView(APIView):
+    permission_classes = [IsStaffOrOwner] 
+
+    def get_object(self, pk):
+        try:
+            obj = Comment.objects.get(pk=pk)
+            self.check_object_permissions(self.request, obj)
+            return obj
+        except Comment.DoesNotExist:
+            raise exceptions.NotFound({"detail": "Comment not found."}) 
+
+
+    def get(self, request, post_id, pk, *args, **kwargs):
+        comment = self.get_object(pk)
+        serialized_data = CommentSerializer(comment).data
+        return Response(serialized_data, status=status.HTTP_200_OK)
+    
+    def put(self, request, post_id, pk, *args, **kwargs):
+        comment = self.get_object(pk)
+        serializer = CommentSerializer(comment, data=request.data, partial=False)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+    def patch(self, request, post_id, pk, *args, **kwargs):
+        comment = self.get_object(pk)
+        serializer = CommentSerializer(comment, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+    def delete(self, request, post_id, pk, *args, **kwargs):
+        comment = self.get_object(pk)
+        comment.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+from rest_framework.response import Response
+from rest_framework.generics import CreateAPIView
+
+class UserRegistrationView(CreateAPIView):
+    serializer_class = UserRegistrationSerializer
+    permission_classes = [permissions.AllowAny]
