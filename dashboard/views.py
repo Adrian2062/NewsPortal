@@ -12,21 +12,21 @@ class AdminPostListView(ListView):
     context_object_name = "posts"
 
     def get_queryset(self):
-        return Post.objects.all().order_by('-published_at')
+        return Post.objects.all().order_by('-created_at')  # FIXED
 
 # Create a new post
 class AdminPostCreateView(CreateView):
     model = Post
     form_class = PostForm
     template_name = "dashboard/post_create.html"
-    success_url = reverse_lazy('dashboard:post-list')  # replace with your URL name
+    success_url = reverse_lazy('dashboard:post-list')
 
     def get_queryset(self):
-        return Post.objects.all().order_by('-published_at')
+        return Post.objects.all().order_by('-created_at')  # FIXED
 
 class AdminPostDeleteView(View):
 
     def post(self, request, pk):
         post = Post.objects.get(pk=pk)
         post.delete()
-        return redirect('dashboard:post-list')  # replace with your URL name
+        return redirect('dashboard:post-list')
